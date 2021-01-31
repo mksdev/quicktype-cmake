@@ -1,8 +1,8 @@
 {
    "type": "object",
    "properties": {
-        "addr1": { "$ref": "#/definitions/groupedProperties/properties" },
-        "addr2": { "$ref": "#/definitions/groupedProperties/properties" }
+        "addr1": { "$ref": "#/definitions/groupedProperties" },
+        "addr2": { "$ref": "#/definitions/groupedProperties" }
    },
    "definitions": {
        "groupedProperties": {
