@@ -1,0 +1,23 @@
+{
+   "type": "object",
+   "properties": {
+        "addr1": { "$ref": "#/definitions/groupedProperties/properties" },
+        "addr2": { "$ref": "#/definitions/groupedProperties/properties" }
+   },
+   "definitions": {
+       "groupedProperties": {
+           "type": "object",
+           "properties": {
+               "street_address": {
+                   "type": "string"
+               },
+               "city": {
+                   "type": "string"
+               },
+               "state": {
+                   "type": "string"
+               }
+           }
+       }
+   }
+}
