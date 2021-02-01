@@ -3,7 +3,7 @@
 #include <gen/city.h>
 
 int main() {
-    std::string jsCar = "{\n"
+    std::string js = "{\n"
                         "\t\"addr1\": {\n"
                         "\t   \"street_address\": \"1600 Pennsylvania Avenue NW\",\n"
                         "\t   \"city\": \"Washington\",\n"
@@ -16,7 +16,7 @@ int main() {
                         "\t}\n"
                         "}";
 
-    gen::city::City obj2 = nlohmann::json::parse(jsCar);
+    gen::city::City city = nlohmann::json::parse(js);
 
     return 0;
 }
