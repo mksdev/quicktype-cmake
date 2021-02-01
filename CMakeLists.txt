@@ -3,7 +3,10 @@ project(genjson)
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(GEN_SCRIPT )
+
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/schema/include)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/schema/include/gen)
+
 file(GLOB files "${CMAKE_CURRENT_SOURCE_DIR}/schema/*.schema")
 set(GENERATED_HEADERS "")
 foreach(file ${files})
@@ -18,11 +21,8 @@ foreach(file ${files})
     get_filename_component(output_name_we "${output}" NAME_WE)
     string (REPLACE " " "_" output_name_we "${output_name_we}")
 
-    # output directory of generated files
-    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/gen)
-
     # absolute path to the generated header
-    set(output_filepath ${CMAKE_CURRENT_BINARY_DIR}/gen/${output_name})
+    set(output_filepath ${CMAKE_CURRENT_SOURCE_DIR}/schema/include/gen/${output_name})
 
     # print info in the cmake log
     message(STATUS "Adding json ${file}")
@@ -40,5 +40,5 @@ endforeach()
 
 add_executable(genjson main.cpp ${GENERATED_HEADERS})
 target_include_directories(genjson PRIVATE
-        ${CMAKE_CURRENT_BINARY_DIR}
+        ./schema/include
         ./lib)

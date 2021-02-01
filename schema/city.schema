@@ -4,6 +4,10 @@
         "addr1": { "$ref": "#/definitions/groupedProperties" },
         "addr2": { "$ref": "#/definitions/groupedProperties" }
    },
+   "allOf": [
+       { "required": ["addr1"] },
+       { "required": ["addr2"] }
+   ],
    "definitions": {
        "groupedProperties": {
            "type": "object",
@@ -17,7 +21,12 @@
                "state": {
                    "type": "string"
                }
-           }
+           },
+           "allOf": [
+              { "required": ["street_address"] },
+              { "required": ["city"] },
+              { "required": ["state"] }
+           ],
        }
    }
 }
