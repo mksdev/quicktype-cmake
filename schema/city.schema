@@ -1,7 +1,9 @@
 {
    "type": "object",
    "properties": {
-        "addr1": { "$ref": "#/definitions/groupedProperties" },
+        "addr1": {
+            "$ref": "#/definitions/groupedProperties"
+        },
         "addr2": { "$ref": "#/definitions/groupedProperties" }
    },
    "allOf": [
@@ -19,7 +21,7 @@
                    "type": "string"
                },
                "state": {
-                   "type": "string"
+                   "type": ["string", "null"]
                }
            },
            "allOf": [

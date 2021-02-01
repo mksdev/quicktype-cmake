@@ -10,9 +10,21 @@
 
 #include <json.hpp>
 
-#include <optional>
-#include <stdexcept>
-#include <regex>
+#ifndef NLOHMANN_OPT_HELPER
+#define NLOHMANN_OPT_HELPER
+namespace nlohmann {
+    template <typename T>
+    struct adl_serializer<std::shared_ptr<T>> {
+        static void to_json(json & j, const std::shared_ptr<T> & opt) {
+            if (!opt) j = nullptr; else j = *opt;
+        }
+
+        static std::shared_ptr<T> from_json(const json & j) {
+            if (j.is_null()) return std::unique_ptr<T>(); else return std::unique_ptr<T>(new T(j.get<T>()));
+        }
+    };
+}
+#endif
 
 namespace gen {
 namespace city {
@@ -29,47 +41,28 @@ namespace city {
         return get_untyped(j, property.data());
     }
 
-    class GroupedProperties {
-        public:
-        GroupedProperties() = default;
-        virtual ~GroupedProperties() = default;
+    template <typename T>
+    inline std::shared_ptr<T> get_optional(const json & j, const char * property) {
+        if (j.find(property) != j.end()) {
+            return j.at(property).get<std::shared_ptr<T>>();
+        }
+        return std::shared_ptr<T>();
+    }
 
-        private:
+    template <typename T>
+    inline std::shared_ptr<T> get_optional(const json & j, std::string property) {
+        return get_optional<T>(j, property.data());
+    }
+
+    struct GroupedProperties {
         std::string city;
-        std::string state;
+        std::shared_ptr<std::string> state;
         std::string street_address;
-
-        public:
-        const std::string & get_city() const { return city; }
-        std::string & get_mutable_city() { return city; }
-        void set_city(const std::string & value) { this->city = value; }
-
-        const std::string & get_state() const { return state; }
-        std::string & get_mutable_state() { return state; }
-        void set_state(const std::string & value) { this->state = value; }
-
-        const std::string & get_street_address() const { return street_address; }
-        std::string & get_mutable_street_address() { return street_address; }
-        void set_street_address(const std::string & value) { this->street_address = value; }
     };
 
-    class City {
-        public:
-        City() = default;
-        virtual ~City() = default;
-
-        private:
+    struct City {
         GroupedProperties addr1;
         GroupedProperties addr2;
-
-        public:
-        const GroupedProperties & get_addr1() const { return addr1; }
-        GroupedProperties & get_mutable_addr1() { return addr1; }
-        void set_addr1(const GroupedProperties & value) { this->addr1 = value; }
-
-        const GroupedProperties & get_addr2() const { return addr2; }
-        GroupedProperties & get_mutable_addr2() { return addr2; }
-        void set_addr2(const GroupedProperties & value) { this->addr2 = value; }
     };
 }
 }
@@ -82,26 +75,26 @@ namespace nlohmann {
     void to_json(json & j, const gen::city::City & x);
 
     inline void from_json(const json & j, gen::city::GroupedProperties& x) {
-        x.set_city(j.at("city").get<std::string>());
-        x.set_state(j.at("state").get<std::string>());
-        x.set_street_address(j.at("street_address").get<std::string>());
+        x.city = j.at("city").get<std::string>();
+        x.state = gen::city::get_optional<std::string>(j, "state");
+        x.street_address = j.at("street_address").get<std::string>();
     }
 
     inline void to_json(json & j, const gen::city::GroupedProperties & x) {
         j = json::object();
-        j["city"] = x.get_city();
-        j["state"] = x.get_state();
-        j["street_address"] = x.get_street_address();
+        j["city"] = x.city;
+        j["state"] = x.state;
+        j["street_address"] = x.street_address;
     }
 
     inline void from_json(const json & j, gen::city::City& x) {
-        x.set_addr1(j.at("addr1").get<gen::city::GroupedProperties>());
-        x.set_addr2(j.at("addr2").get<gen::city::GroupedProperties>());
+        x.addr1 = j.at("addr1").get<gen::city::GroupedProperties>();
+        x.addr2 = j.at("addr2").get<gen::city::GroupedProperties>();
     }
 
     inline void to_json(json & j, const gen::city::City & x) {
         j = json::object();
-        j["addr1"] = x.get_addr1();
-        j["addr2"] = x.get_addr2();
+        j["addr1"] = x.addr1;
+        j["addr2"] = x.addr2;
     }
 }
